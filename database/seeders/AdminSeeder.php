@@ -15,12 +15,13 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         DB::table('admin')->insert([
-            'id' => 1,
-            'nama_usaha' => 'antreezy',
+            'id_admin' => 1,
+            'nama_admin' => 'Faris Hasan',
             'username' => 'admin',
             'role' => 'admin',
             'email' => 'farishasan099@gmail.com',
             'password' => Hash::make('admin'),
+            'no_hp' => '081234567890',
             'created_at' => now(),
             'updated_at' => now()
         ]);

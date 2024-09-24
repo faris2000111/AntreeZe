@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('pelayanan', function (Blueprint $table) {
             $table->bigIncrements('id_pelayanan');
-            $table->string('id_admin')->nullable();
+            $table->unsignedBigInteger('id_admin'); 
+            $table->foreign('id_admin')->references('id_admin')->on('admin')->onDelete('cascade');    
             $table->string('jenis')->nullable();
             $table->integer('no_pelayanan')->nullable();
             $table->timestamps();

@@ -18,7 +18,17 @@ class Admin extends Authenticatable
      * @var string[]
      */
     protected $table = 'admin';
-    protected $fillable = ['username', 'password'];
+    protected $primaryKey = 'id_admin';
+    protected $fillable = [
+        'nama_admin',
+        'email',
+        'username',
+        'password',
+        'no_hp',
+        'alamat',
+        'role',
+        'remember_token',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -38,5 +48,9 @@ class Admin extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+    public function pelayanans()
+    {
+        return $this->hasMany(Pelayanan::class, 'id_admin');
+    }
+
 }
