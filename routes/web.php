@@ -1,14 +1,18 @@
 <?php
 
-use App\Http\Controllers\ChangePasswordController;
-use App\Http\Controllers\HomeController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
+use App\Http\Controllers\ResetController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\LayananController;
+use App\Http\Controllers\ChangePasswordController;
+use App\Http\Controllers\Admin\PelayananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,41 +29,13 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['auth:admin']], function () {
 
     Route::get('/', [HomeController::class, 'home']);
-	Route::get('dashboard', function () {
-		return view('dashboard');
-	})->name('dashboard');
+	Route::get('dashboard', [HomeController::class, 'home'])->name('dashboard');
+	Route::resource('karyawan', App\Http\Controllers\admin\AdminController::class);   
+	Route::resource('layanan', App\Http\Controllers\admin\LayananController::class); 
+	Route::resource('pelayanan', App\Http\Controllers\admin\PelayananController::class);
+	Route::resource('booking', App\Http\Controllers\admin\BookingController::class); 
+	Route::get('booking/kelola', [App\Http\Controllers\admin\BookingController::class, 'index'])->name('booking.kelola');
 
-	Route::get('billing', function () {
-		return view('billing');
-	})->name('billing');
-
-	Route::get('profile', function () {
-		return view('profile');
-	})->name('profile');
-
-	Route::get('rtl', function () {
-		return view('rtl');
-	})->name('rtl');
-
-	Route::get('user-management', function () {
-		return view('laravel-examples/user-management');
-	})->name('user-management');
-
-	Route::get('tables', function () {
-		return view('tables');
-	})->name('tables');
-
-    Route::get('virtual-reality', function () {
-		return view('virtual-reality');
-	})->name('virtual-reality');
-
-    Route::get('static-sign-in', function () {
-		return view('static-sign-in');
-	})->name('sign-in');
-
-    Route::get('static-sign-up', function () {
-		return view('static-sign-up');
-	})->name('sign-up');
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile', [InfoUserController::class, 'create']);
@@ -72,8 +48,6 @@ Route::group(['middleware' => ['auth:admin']], function () {
 
 
 Route::group(['middleware' => 'guest'], function () {
-    Route::get('/register', [RegisterController::class, 'create']);
-    Route::post('/register', [RegisterController::class, 'store']);
     Route::get('/login', [SessionsController::class, 'create']);
     Route::post('/session', [SessionsController::class, 'store']);
 	Route::get('/login/forgot-password', [ResetController::class, 'create']);

@@ -13,11 +13,11 @@
             <i class="fa fa-close"></i>
           </button>
         </div>
-        <!-- End Toggle Button -->
+       End Toggle Button 
       </div>
       <hr class="horizontal dark my-1">
       <div class="card-body pt-sm-3 pt-0">
-        <!-- Sidebar Backgrounds -->
+         Sidebar Backgrounds
         <div>
           <h6 class="mb-0">Sidebar Colors</h6>
         </div>
@@ -31,7 +31,7 @@
             <span class="badge filter bg-gradient-danger" data-color="danger" onclick="sidebarColor(this)"></span>
           </div>
         </a>
-        <!-- Sidenav Type -->
+        <!-- Sidenav Type 
         <div class="mt-3">
           <h6 class="mb-0">Sidenav Type</h6>
           <p class="text-sm">Choose between 2 different sidenav types.</p>
@@ -41,7 +41,7 @@
           <button class="btn bg-gradient-primary w-100 px-3 mb-2  {{ (Request::is('rtl') ? 'me-2' : 'ms-2') }}" data-class="bg-white" onclick="sidebarType(this)">White</button>
         </div>
         <p class="text-sm d-xl-none d-block mt-2">You can change the sidenav type just on desktop view.</p>
-        <!-- Navbar Fixed -->
+        <!-- Navbar Fixed 
         <div class="mt-3">
           <h6 class="mb-0">Navbar Fixed</h6>
         </div>
