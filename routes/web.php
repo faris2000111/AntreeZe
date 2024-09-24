@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
 	Route::resource('layanan', App\Http\Controllers\admin\LayananController::class); 
 	Route::resource('pelayanan', App\Http\Controllers\admin\PelayananController::class);
 	Route::resource('booking', App\Http\Controllers\admin\BookingController::class); 
+	Route::get('booking/kelola', [App\Http\Controllers\admin\BookingController::class, 'index'])->name('booking.kelola');
+
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile', [InfoUserController::class, 'create']);

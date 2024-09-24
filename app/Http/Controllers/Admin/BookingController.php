@@ -11,10 +11,10 @@ class BookingController extends Controller
     public function index()
     {
         // Mengambil semua data booking dari database
-        $bookings = Booking::all();
+        $booking = Booking::all();
         
         // Mengirim data booking ke view
-        return view('booking.booking', compact('bookings'));
+        return view('booking.booking', compact('booking'));
     }
 
     public function create()
@@ -24,7 +24,7 @@ class BookingController extends Controller
     }
     public function kelola()
     {
-        
+
     }
 
     public function edit($id)

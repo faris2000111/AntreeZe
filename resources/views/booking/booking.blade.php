@@ -8,7 +8,7 @@
 
           <div class="card">
             <div class="card-header text-right">
-                <a href="{{ route('booking.kelola') }}" class="btn btn-info" style="background-color: {{ $profile->warna }}; float: right; color: white;" role="button">Tambah Pelayanan</a>
+                <a href="{{ route('booking.kelola') }}" class="btn btn-info" style="background-color: {{ $profile->warna }}; float: right; color: white;" role="button">Kelola Booking</a>
             </div>
             <div class="card-body">          
 
