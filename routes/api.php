@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Mobile\BookingController;
 use App\Http\Controllers\Mobile\ServiceController;
 use App\Http\Controllers\Mobile\UserController;
 use Illuminate\Http\Request;
@@ -23,6 +24,14 @@ Route::post('update_profile', [UserController::class, 'updateProfile']);
 
 Route::get('allservice', [ServiceController::class, 'getServiceList']);
 Route::get('service/{id}', [ServiceController::class, 'getservicelistbyid']);
+
+Route::post('booking', [BookingController::class, 'getdateavailabe']);
+Route::post('loket', [BookingController::class, 'checkAvailableLoket']);
+Route::post('insertbooking', [BookingController::class, 'insertbooking']);
+Route::post('gethistorybooking', [BookingController::class, 'getBookingHistory']);
+Route::post('getTicketUser', [BookingController::class, 'getTicketUsers']);
+Route::get('getbookuser', [BookingController::class, 'getUserBookChart']);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
