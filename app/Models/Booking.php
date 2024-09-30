@@ -10,9 +10,22 @@ class Booking extends Model
     use HasFactory;
     protected $table = 'booking';
     protected $primaryKey = 'id_booking'; // Set primary key ke 'id_layanan'
-
     public $incrementing = true; // Jika 'id_layanan' auto-increment, pastikan true
-    
     protected $keyType = 'int'; // Jika 'id_layanan' adalah integer
+    protected $fillable = [
+        'nomor_booking',
+        'id_pelayanan',
+        'id_users',
+        'alamat',
+        'id_layanan',
+        'jam_booking',
+        'tanggal',
+        'status',
+        'catatan'
+    ];
 
+    public function layanan()
+    {
+        return $this->belongsTo(Layanan::class, 'id_layanan');
+    }
 }
