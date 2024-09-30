@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             'nama_pembeli' => 'karyawan',
             'username' => 'karyawan',
             'email' => 'farishasan012@gmail.com',
+            'phone_number' => '08712312322',
             'password' => Hash::make('karyawan'),
             'created_at' => now(),
             'updated_at' => now()

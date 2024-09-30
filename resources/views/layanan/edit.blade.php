@@ -12,37 +12,35 @@
                         @csrf
                         @method('PUT')
 
-                        <!-- Nama Layanan -->
-                        <div class="col-12">
+                        <!-- Nama Layanan dan Waktu in one row -->
+                        <div class="col-md-6">
                             <label for="nama_layanan" class="form-label">Nama Layanan</label>
                             <input type="text" name="nama_layanan" class="form-control" id="nama_layanan" value="{{ $layanan->nama_layanan }}" required>
                             <div class="invalid-feedback">Nama layanan tidak boleh kosong!</div>
                         </div>
 
-                        <!-- Deskripsi -->
-                        <div class="col-12">
+                        <div class="col-md-6">
+                            <label for="waktu" class="form-label">Waktu</label>
+                            <input type="time" name="waktu" class="form-control" id="waktu" value="{{ $layanan->waktu }}" required>
+                            <div class="invalid-feedback">Waktu tidak boleh kosong!</div>
+                        </div>
+
+                        <!-- Deskripsi dan Gambar in one row -->
+                        <div class="col-md-6">
                             <label for="deskripsi" class="form-label">Deskripsi</label>
                             <textarea name="deskripsi" class="form-control" id="deskripsi" required>{{ $layanan->deskripsi }}</textarea>
                             <div class="invalid-feedback">Deskripsi layanan tidak boleh kosong!</div>
                         </div>
 
-                        <!-- Gambar -->
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label for="gambar" class="form-label">Gambar</label>
                             @if($layanan->gambar)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/layanan/' . $layanan->gambar) }}" alt="Gambar Layanan" style="max-width: 200px; height: auto;">
+                                    <img src="{{ asset('storage/layanan/' . $layanan->gambar) }}" alt="Gambar Layanan" style="max-width: 100px; height: auto;">
                                 </div>
                             @endif
                             <input type="file" name="gambar" class="form-control" id="gambar">
                             <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar.</small>
-                        </div>
-
-                        <!-- Waktu -->
-                        <div class="col-12">
-                            <label for="waktu" class="form-label">Waktu</label>
-                            <input type="time" name="waktu" class="form-control" id="waktu" value="{{ $layanan->waktu }}" required>
-                            <div class="invalid-feedback">Waktu tidak boleh kosong!</div>
                         </div>
 
                         <!-- Tombol Simpan -->

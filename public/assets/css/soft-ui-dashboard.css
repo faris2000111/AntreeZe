@@ -4733,12 +4733,11 @@ fieldset:disabled .btn {
 .page-item:not(:first-child) .page-link {
   margin-left: -1px;
 }
-.page-item.active .page-link {
-  background-color: #cb0c9f;
-  border-color: #cb0c9f;
-  color: #fff;
-  z-index: 3;
-}
+/* .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #000; 
+} */
 .page-item.disabled .page-link {
   background-color: #fff;
   border-color: #dee2e6;
@@ -20160,4 +20159,16 @@ pre[class*="language-"] {
   .ps {
     overflow: auto !important;
   }
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  background-color: #fff; /* Ubah warna latar belakang */
+  border-radius: 0%; /* Membulatkan tombol */
+  color: #2152FF; /* Warna teks */
+  padding: 10px; /* Ruang dalam tombol */
+  margin: 5px; /* Ruang antar tombol */
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background-color: #2152FF; /* Warna latar belakang untuk tombol aktif */
+  color: #fff; /* Warna teks tombol aktif */
 }

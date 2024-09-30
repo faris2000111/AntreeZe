@@ -27,14 +27,34 @@ use App\Http\Controllers\Admin\PelayananController;
 
 
 Route::group(['middleware' => ['auth:admin']], function () {
+	Route::middleware(['admin'])->group(function () {
+		Route::resource('karyawan', App\Http\Controllers\admin\AdminController::class);  
+		Route::resource('pelayanan', App\Http\Controllers\admin\PelayananController::class); 
+	});
 
     Route::get('/', [HomeController::class, 'home']);
 	Route::get('dashboard', [HomeController::class, 'home'])->name('dashboard');
-	Route::resource('karyawan', App\Http\Controllers\admin\AdminController::class);   
+	
 	Route::resource('layanan', App\Http\Controllers\admin\LayananController::class); 
-	Route::resource('pelayanan', App\Http\Controllers\admin\PelayananController::class);
-	Route::resource('booking', App\Http\Controllers\admin\BookingController::class); 
-	Route::get('booking/kelola', [App\Http\Controllers\admin\BookingController::class, 'index'])->name('booking.kelola');
+	
+	Route::get('/booking', [App\Http\Controllers\admin\BookingController::class, 'index'])->name('booking.index');
+	Route::get('/booking/edit', [App\Http\Controllers\admin\BookingController::class, 'edit'])->name('booking.edit');
+	Route::put('/booking/update', [App\Http\Controllers\admin\BookingController::class, 'update'])->name('booking.update');
+	Route::delete('/booking/{id}', [App\Http\Controllers\admin\BookingController::class, 'destroy'])->name('booking.destroy');
+
+	// Profile editing
+	Route::post('/profile', [App\Http\Controllers\admin\ProfileController::class, 'index'])->name('profile.index');
+	Route::put('/profile/edit', [App\Http\Controllers\admin\ProfileController::class, 'edit'])->name('profile.edit');
+	Route::put('/profile/changePassword', [App\Http\Controllers\admin\ProfileController::class, 'changePassword'])->name('profile.changePassword');
+	Route::put('/profile/settings', [App\Http\Controllers\admin\ProfileController::class, 'settings'])->name('profile.settings');
+
+	Route::resource('laporan-mingguan', App\Http\Controllers\admin\LaporanMingguanController::class); 
+
+
+
+
+
+
 
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
