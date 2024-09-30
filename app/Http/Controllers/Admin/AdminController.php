@@ -36,7 +36,6 @@ class AdminController extends Controller
             'password' => 'required|min:6|confirmed',
             'password_confirmation' => 'required|min:6',
             'no_hp' => 'required',
-            'alamat' => 'required',
         ], [
             'nama_admin.required' => 'Nama tidak boleh kosong!',
             'email.required' => 'Email tidak boleh kosong!',
@@ -46,7 +45,6 @@ class AdminController extends Controller
             'password.confirmed' => 'Password dan konfirmasi password tidak sama!',
             'password_confirmation.required' => 'Konfirmasi password tidak boleh kosong!',
             'no_hp.required' => 'Nomor HP tidak boleh kosong!',
-            'alamat.required' => 'Alamat tidak boleh kosong!',
         ]);
         
         // Membuat data karyawan baru
@@ -56,7 +54,6 @@ class AdminController extends Controller
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
             'role' => 'karyawan',
             'remember_token' => Str::random(60),
         ]);
@@ -79,7 +76,6 @@ class AdminController extends Controller
             'username' => 'required',
             'password' => 'nullable|min:6|confirmed',
             'no_hp' => 'required',
-            'alamat' => 'required',
         ]);
 
         $karyawan = Admin::findOrFail($id);
@@ -90,7 +86,6 @@ class AdminController extends Controller
             $karyawan->password = Hash::make($request->password);
         }
         $karyawan->no_hp = $request->no_hp;
-        $karyawan->alamat = $request->alamat;
 
         $karyawan->save();
 

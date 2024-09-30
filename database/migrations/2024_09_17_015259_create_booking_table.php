@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('booking', function (Blueprint $table) {
             $table->bigIncrements('id_booking');
             $table->string('nomor_booking')->nullable();
-            $table->integer('id_pelayanan')->nullable();
-            $table->string('id_users')->nullable();
-            $table->text('alamat')->nullable();
-            $table->string('id_layanan')->nullable();
+            $table->integer('no_pelayanan')->nullable();
+            $table->integer('id_users')->nullable();
+            $table->integer('id_layanan')->nullable();
             $table->time('jam_booking')->nullable();
             $table->date('tanggal')->nullable();
             $table->string('status')->nullable();

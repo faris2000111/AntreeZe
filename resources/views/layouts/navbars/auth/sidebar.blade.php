@@ -91,11 +91,11 @@
         <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Halaman Profil</h6>
       </li>
       <li class="nav-item pb-2">
-        <a class="nav-link {{ (Request::is('profil') ? 'active' : '') }}" href="{{ url('profil') }}">
+        <a class="nav-link {{ (Request::is('profile') ? 'active' : '') }}" href="{{ url('profile') }}">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i style="font-size: 1rem;" class="fas fa-lg fa-user ps-2 pe-2 text-center text-dark {{ (Request::is('profil') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
+                <i style="font-size: 1rem;" class="fas fa-lg fa-user ps-2 pe-2 text-center text-dark {{ (Request::is('profile') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
             </div>
-            <span class="nav-link-text ms-1">Profil</span>
+            <span class="nav-link-text ms-1 {{ (Request::is('profile') ? 'text-white' : 'text-dark') }}">Profil</span>
         </a>
       </li>
       <li class="nav-item pb-2">

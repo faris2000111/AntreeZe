@@ -10,8 +10,9 @@
                     <!-- Form untuk menambah pelayanan -->
                     <form class="row g-3 needs-validation" action="{{ route('pelayanan.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
-                        <!-- Dropdown Nama Admin -->
-                        <div class="col-12">
+                        
+                        <!-- Nama Admin and Jenis Pelayanan in one row -->
+                        <div class="col-md-6">
                             <label for="id_admin" class="form-label">Nama Admin</label>
                             <select name="id_admin" class="form-control" id="id_admin" required>
                                 <option value="" disabled selected>Pilih Admin</option>
@@ -22,7 +23,7 @@
                             <div class="invalid-feedback">Silakan pilih admin!</div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label for="jenis" class="form-label">Jenis Pelayanan</label>
                             <select name="jenis" class="form-control" id="jenis" required>
                                 <option value="" selected disabled>Pilih Jenis Pelayanan</option>
@@ -33,14 +34,14 @@
                             <div class="invalid-feedback">Jenis Pelayanan tidak boleh kosong!</div>
                         </div>
 
-                        <div class="col-12">
+                        <!-- No Pelayanan in full row -->
+                        <div class="col-md-6">
                             <label for="no_pelayanan" class="form-label">No Pelayanan</label>
                             <input type="text" name="no_pelayanan" class="form-control" id="no_pelayanan" value="{{ $newNoPelayanan }}" readonly required>
                             <div class="invalid-feedback">No Pelayanan tidak boleh kosong!</div>
                         </div>
 
-
-
+                        <!-- Tombol Simpan -->
                         <div class="col-12">
                             <button class="btn w-100" style="color: white; background-color: {{ $profile->warna }};" type="submit">Tambah Pelayanan</button>
                         </div>

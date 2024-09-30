@@ -41,6 +41,14 @@
   <!-- SweetAlert2 -->
   <script src="{{ asset('dist/sweetalert2.all.min.js') }}"></script>
 
+  <!-- DataTables CSS for Bootstrap -->
+<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
   <!-- Bootstrap CSS (latest version) -->
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
@@ -92,6 +100,19 @@
 
   <!-- Control Center for Soft Dashboard -->
   <script src="{{ asset('assets/js/soft-ui-dashboard.min.js?v=1.0.3') }}"></script>
+
+  <!-- DataTables -->
+  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+  <!-- DataTables Bootstrap JS -->
+  <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Initialize DataTables -->
+<script>
+$(document).ready(function() {
+    $('#dataTable').DataTable();
+});
+</script>
 
   <!-- Include section scripts -->
   @yield('scripts')
