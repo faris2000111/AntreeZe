@@ -14,9 +14,8 @@ class Booking extends Model
     protected $keyType = 'int'; // Jika 'id_layanan' adalah integer
     protected $fillable = [
         'nomor_booking',
-        'id_pelayanan',
+        'no_pelayanan',
         'id_users',
-        'alamat',
         'id_layanan',
         'jam_booking',
         'tanggal',
