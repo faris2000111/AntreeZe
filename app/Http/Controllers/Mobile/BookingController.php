@@ -117,12 +117,14 @@ class BookingController extends Controller
     {
         try {
             $request->validate([
+
                 'no_pelayanan' => ['required', 'string'],
                 'id_users' => ['required'],
                 'id_layanan' => ['required'],
                 'jam_booking' => ['required'],
                 'tanggal' => ['required', 'date'],
             ]);
+
 
             function generateTime($start_time, $end_time, $interval = 60)
             {
@@ -235,7 +237,6 @@ class BookingController extends Controller
 
             // Query untuk mendapatkan booking berdasarkan id_users
             $date = Carbon::now()->toDateString();
-
             $bookings = Booking::with('layanan')->where('id_users', $id_users)->whereDate('tanggal', $date)->get();
 
             // Cek apakah booking ditemukan
@@ -258,6 +259,7 @@ class BookingController extends Controller
         if (!$profile) {
             return ResponseFormatter::error(null, 'Profile not found', 404);
         }
+
         $startHour = $profile->jam_buka;
         $endHour = $profile->jam_tutup;
 
@@ -357,4 +359,5 @@ class BookingController extends Controller
             ], 'Update gagal', 500);
         }
     }
+
 }
