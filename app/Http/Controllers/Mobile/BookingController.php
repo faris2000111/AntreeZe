@@ -46,7 +46,7 @@ class BookingController extends Controller
             foreach ($pelayanans as $no_pelayanan) {
                 $bookings[$no_pelayanan] = Booking::where('tanggal', $request->tanggal)
                     ->where('id_layanan', $request->id_layanan)
-                    ->where('id_pelayanan', $no_pelayanan)
+                    ->where('no_pelayanan', $no_pelayanan)
                     ->pluck('jam_booking');
             }
             $non_available = [];
@@ -96,7 +96,7 @@ class BookingController extends Controller
             $bookedPelayanans = Booking::where('tanggal', $request->tanggal)
                 ->where('id_layanan', $request->id_layanan)
                 ->where('jam_booking', $request->jam_booking)
-                ->pluck('id_pelayanan');
+                ->pluck('no_pelayanan');
 
             // Mencari nomor pelayanan yang belum dipakai
             $availablePelayanans = $allPelayanans->diff($bookedPelayanans)->values();
@@ -117,38 +117,62 @@ class BookingController extends Controller
     {
         try {
             $request->validate([
-                'id_pelayanan' => ['required', 'string'],
+                'no_pelayanan' => ['required', 'string'],
                 'id_users' => ['required'],
-                'alamat' => ['required'],
                 'id_layanan' => ['required'],
                 'jam_booking' => ['required'],
                 'tanggal' => ['required', 'date'],
             ]);
 
-            // Ambil nomor booking terakhir berdasarkan tanggal dan id_layanan
-            $lastBooking = Booking::where('tanggal', $request->tanggal)
-                ->where('id_layanan', $request->id_layanan)
-                ->orderBy('nomor_booking', 'desc')
-                ->first();
+            function generateTime($start_time, $end_time, $interval = 60)
+            {
+                $times = [];
 
-            if ($lastBooking) {
-                // Jika ada data, increment nomor booking terakhir
-                $lastNumber = intval(substr($lastBooking->nomor_booking, -2)); // Ambil 2 digit terakhir
-                $newNumber = str_pad($lastNumber + 1, 2, '0', STR_PAD_LEFT); // Increment dan format jadi 2 digit
-            } else {
-                // Jika tidak ada data, mulai dari 01
-                $newNumber = '01';
+                // Konversi jam buka dan jam tutup ke timestamp
+                $start = strtotime($start_time);
+                $end = strtotime($end_time);
+
+                // Loop untuk menghasilkan jam berdasarkan interval
+                for ($current_time = $start; $current_time <= $end; $current_time += $interval * 60) {
+                    $times[] = date('H:i', $current_time); // Format waktu jam:menit
+                }
+
+                return $times;
             }
 
-            // Generate nomor_booking baru
-            $nomorBooking = $newNumber;
+            // Ambil jam buka dan tutup dari profil
+            $profile = Profile::find(1); // Asumsikan profil id 1
+            $jam_buka = $profile->jam_buka;
+            $jam_tutup = $profile->jam_tutup;
+
+            // Hasilkan array waktu dari jam buka sampai jam tutup dengan interval 1 jam
+            $times = generateTime($jam_buka, $jam_tutup);
+
+            // Cocokkan jam_booking dengan daftar waktu layanan
+            $jamBookingIndex = array_search($request->jam_booking, $times);
+
+            if ($jamBookingIndex === false) {
+                // Jika jam_booking tidak ditemukan dalam daftar waktu, return error
+                return ResponseFormatter::error([
+                    'message' => $times,
+                ], 'Booking Failed', 400);
+            }
+
+            // Nomor antrian berdasarkan indeks waktu
+            $nomorAntrian = str_pad($jamBookingIndex + 1, 2, '0', STR_PAD_LEFT);
+
+            // Konversi id_layanan ke huruf (A = 1, B = 2, dst.)
+            $hurufLayanan = chr(65 + ($request->id_layanan - 1));
+            $noPelayanan = chr(65 + ($request->no_pelayanan - 1));
+
+            // Gabungkan huruf layanan dengan nomor antrian
+            $nomorBooking = $hurufLayanan . $noPelayanan . $nomorAntrian;
 
             // Buat booking baru
             $booking = Booking::create([
                 'nomor_booking' => $nomorBooking,
-                'id_pelayanan' => $request->id_pelayanan,
+                'no_pelayanan' => $request->no_pelayanan,
                 'id_users' => $request->id_users,
-                'alamat' => $request->alamat,
                 'id_layanan' => $request->id_layanan,
                 'jam_booking' => $request->jam_booking,
                 'tanggal' => $request->tanggal,
@@ -211,6 +235,7 @@ class BookingController extends Controller
 
             // Query untuk mendapatkan booking berdasarkan id_users
             $date = Carbon::now()->toDateString();
+
             $bookings = Booking::with('layanan')->where('id_users', $id_users)->whereDate('tanggal', $date)->get();
 
             // Cek apakah booking ditemukan
@@ -227,15 +252,12 @@ class BookingController extends Controller
 
     public function getUserBookChart()
     {
-        // Ambil profil berdasarkan ID dari request
-        $profile = Profile::find('1');
 
+        $profile = Profile::find('1');
         // Pastikan profile ditemukan
         if (!$profile) {
             return ResponseFormatter::error(null, 'Profile not found', 404);
         }
-
-        // Ambil jam buka dan jam tutup dari database
         $startHour = $profile->jam_buka;
         $endHour = $profile->jam_tutup;
 
@@ -260,9 +282,8 @@ class BookingController extends Controller
         $hours = generateTimes($startHour, $endHour);
         $layanan = Layanan::select('id_layanan', 'nama_layanan')->get();
 
-        // Ambil booking data sesuai dengan jam layanan
-        // Query untuk mendapatkan booking berdasarkan id_users
         $date = Carbon::now()->toDateString();
+        $testDate = '2024-10-02';
         $bookings = Booking::with('layanan')
             ->selectRaw('id_layanan, EXTRACT(HOUR FROM jam_booking) as hour, COUNT(*) as booking_count')
             ->groupBy('id_layanan', 'hour')
@@ -298,5 +319,42 @@ class BookingController extends Controller
             'layanan' => $layanan,
             'data' => $response
         ], 'Data successfully retrieved');
+    }
+
+    public function updateBookingStatus(Request $request)
+    {
+        try {
+            $request->validate([
+                'id_booking' => 'required', // memastikan ID booking diberikan
+            ]);
+
+            // Mencari booking berdasarkan id_booking
+            $booking = Booking::find($request->id_booking);
+
+            // Cek jika booking ditemukan
+            if ($booking) {
+                // Update status
+                $booking->status = 'selesai';
+                // Simpan perubahan
+                $booking->save();
+
+                // Kirim respons sukses
+                return ResponseFormatter::success([
+                    'data' => $booking,
+                    'message' => 'Status booking berhasil diupdate.'
+                ], 'Update berhasil');
+            } else {
+                // Jika booking tidak ditemukan
+                return ResponseFormatter::error([
+                    'message' => 'Booking tidak ditemukan'
+                ], 'Booking tidak ditemukan', 404);
+            }
+        } catch (Exception $error) {
+            // Handle error
+            return ResponseFormatter::error([
+                'message' => 'Terjadi kesalahan saat update status',
+                'error' => $error
+            ], 'Update gagal', 500);
+        }
     }
 }
