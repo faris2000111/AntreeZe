@@ -16,17 +16,6 @@ class ServiceController extends Controller
     public function getServiceList()
     {
         try {
-            $token = 'f3v5aw8OTUalJG-u_9JUFp:APA91bHo9_xpKlpRr1M8rc0U3W40U4VLp2-Ny8bfz6Gabilj5JYoyjrgShBmLf7u-pYpUJ5ymDS3axWKojf__QMRkehNlod-J1FIsV3iT_aD9PW8wxzSTgs2l6rCM-BNhJD9JJD9rB6V';
-            $message = CloudMessage::withTarget('token', $token)
-                ->withNotification(Notification::create('Status Pesanan', 'Pesanan Booking anda '))
-                ->withData([
-                    'status' => "turu",
-                    'alesan' => "tes",
-                ]);
-            $messaging = app('firebase.messaging');
-            $messaging->send($message);
-
-
             $services = Service::all();
             return ResponseFormatter::success(['message' => 'The service list was successfully retrieved', 'data' => $services], "Succes get list");
         } catch (Exception $error) {

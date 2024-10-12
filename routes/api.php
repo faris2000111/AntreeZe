@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Mobile\BookingController;
+use App\Http\Controllers\Mobile\ProfileController;
 use App\Http\Controllers\Mobile\ServiceController;
 use App\Http\Controllers\Mobile\UserController;
 use Illuminate\Http\Request;
@@ -39,6 +40,8 @@ Route::post('getTicketUser', [BookingController::class, 'getTicketUsers']);
 Route::get('getbookuser', [BookingController::class, 'getUserBookChart']);
 Route::post('updateBooking', [BookingController::class, 'updateBookingStatus']);
 
+Route::get('getprofile', [ProfileController::class, 'getProfile']);
+Route::get('getbanners', [ProfileController::class, 'getListBanners']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

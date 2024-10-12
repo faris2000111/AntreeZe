@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mobile;
 
 use Exception;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Booking;
 use App\Models\Layanan;
 use App\Models\Profile;
@@ -11,6 +12,8 @@ use App\Models\Pelayanan;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class BookingController extends Controller
 {
@@ -129,32 +132,38 @@ class BookingController extends Controller
             function generateTime($start_time, $end_time, $interval = 60)
             {
                 $times = [];
-
-                // Konversi jam buka dan jam tutup ke timestamp
                 $start = strtotime($start_time);
                 $end = strtotime($end_time);
 
-                // Loop untuk menghasilkan jam berdasarkan interval
                 for ($current_time = $start; $current_time <= $end; $current_time += $interval * 60) {
-                    $times[] = date('H:i', $current_time); // Format waktu jam:menit
+                    $times[] = date('H:i', $current_time);
                 }
 
                 return $times;
             }
 
-            // Ambil jam buka dan tutup dari profil
-            $profile = Profile::find(1); // Asumsikan profil id 1
+            $existingBooking = Booking::where('tanggal', $request->tanggal)
+                ->where('jam_booking', $request->jam_booking)
+                ->where('no_pelayanan', $request->no_pelayanan)
+                ->where('id_layanan', $request->id_layanan)
+                ->first();
+
+            if ($existingBooking) {
+                return ResponseFormatter::error([
+                    'message' => 'Booking already exists for the selected time, date, and service point.',
+                ], 'Booking Failed', 400);
+            }
+
+            $profile = Profile::find(1);
             $jam_buka = $profile->jam_buka;
             $jam_tutup = $profile->jam_tutup;
 
-            // Hasilkan array waktu dari jam buka sampai jam tutup dengan interval 1 jam
             $times = generateTime($jam_buka, $jam_tutup);
 
             // Cocokkan jam_booking dengan daftar waktu layanan
             $jamBookingIndex = array_search($request->jam_booking, $times);
 
             if ($jamBookingIndex === false) {
-                // Jika jam_booking tidak ditemukan dalam daftar waktu, return error
                 return ResponseFormatter::error([
                     'message' => $times,
                 ], 'Booking Failed', 400);
@@ -162,13 +171,22 @@ class BookingController extends Controller
 
             // Nomor antrian berdasarkan indeks waktu
             $nomorAntrian = str_pad($jamBookingIndex + 1, 2, '0', STR_PAD_LEFT);
-
-            // Konversi id_layanan ke huruf (A = 1, B = 2, dst.)
             $hurufLayanan = chr(65 + ($request->id_layanan - 1));
             $noPelayanan = chr(65 + ($request->no_pelayanan - 1));
 
             // Gabungkan huruf layanan dengan nomor antrian
             $nomorBooking = $hurufLayanan . $noPelayanan . $nomorAntrian;
+
+            // $user = User::where('id_users', $request->id_users)->first();
+            // $token = $user->phone_token;
+            // $message = CloudMessage::withTarget('token', $token)
+            //     ->withNotification(Notification::create('Pesanan berhasil Dibuat', 'Pesanan anda dengan nomor ' . $nomorBooking . ' berhasil dibuat'))
+            //     ->withData([
+            //         'status' => "turu",
+            //         'alesan' => "tes",
+            //     ]);
+            // $messaging = app('firebase.messaging');
+            // $messaging->send($message);
 
             // Buat booking baru
             $booking = Booking::create([
@@ -192,8 +210,6 @@ class BookingController extends Controller
         }
     }
 
-
-
     public function getBookingHistory(Request $request)
     {
         try {
@@ -201,11 +217,11 @@ class BookingController extends Controller
             $status = $request->status;
 
             // Melakukan query ke database untuk mendapatkan history booking berdasarkan id_users dan status
-            $bookings = Booking::with('layanan')  // Menambahkan eager loading untuk layanan
+            $bookings = Booking::with('layanan')
                 ->where('id_users', $userId)
                 ->where('status', $status)
-                ->orderBy('tanggal', 'desc')
-                ->orderBy('jam_booking', 'desc')
+                ->orderBy('tanggal', 'asc')
+                ->orderBy('jam_booking', 'asc')
                 ->get();
 
             if ($bookings->isEmpty()) {
@@ -232,21 +248,18 @@ class BookingController extends Controller
     public function getTicketUsers(Request $request)
     {
         try {
-            // Ambil id_users dari request
-            $id_users = $request->input('id_users');
 
-            // Query untuk mendapatkan booking berdasarkan id_users
+            $id_users = $request->input('id_users');
             $date = Carbon::now()->toDateString();
             $bookings = Booking::with('layanan')->where('id_users', $id_users)->whereDate('tanggal', $date)->get();
 
-            // Cek apakah booking ditemukan
+
             if ($bookings->isEmpty()) {
                 return ResponseFormatter::error(null, 'No bookings found for this user.', 404);
             }
 
             return ResponseFormatter::success($bookings, 'Bookings retrieved successfully.');
         } catch (Exception $error) {
-            // Handle error
             return ResponseFormatter::error(null, 'Something went wrong: ' . $error->getMessage(), 500);
         }
     }
@@ -285,7 +298,6 @@ class BookingController extends Controller
         $layanan = Layanan::select('id_layanan', 'nama_layanan')->get();
 
         $date = Carbon::now()->toDateString();
-        $testDate = '2024-10-02';
         $bookings = Booking::with('layanan')
             ->selectRaw('id_layanan, EXTRACT(HOUR FROM jam_booking) as hour, COUNT(*) as booking_count')
             ->groupBy('id_layanan', 'hour')
@@ -304,11 +316,22 @@ class BookingController extends Controller
                 'bookings' => []
             ];
 
+            // foreach ($services as $serviceId) {
+            //     $bookingsForHour = $bookings->where('hour', $index + (int)explode(':', $startHour)[0])->where('id_layanan', $serviceId)->first();
+            //     $barGroup['bookings'][] = [
+            //         'service_id' => $serviceId,
+            //         'booking_count' => $bookingsForHour ? $bookingsForHour->booking_count : 0
+            //     ];
+            // }
+
+            // $response[] = $barGroup;
+
             foreach ($services as $serviceId) {
-                $bookingsForHour = $bookings->where('hour', $index + (int)explode(':', $startHour)[0])->where('id_layanan', $serviceId)->first();
+                $hourInt = (int) explode(':', $hour)[0];
+                $bookingsForHour = $bookings->where('hour', $hourInt)->where('id_layanan', $serviceId)->first();
                 $barGroup['bookings'][] = [
                     'service_id' => $serviceId,
-                    'booking_count' => $bookingsForHour ? $bookingsForHour->booking_count : 0
+                    'booking_count' => $bookingsForHour ? (int) $bookingsForHour->booking_count : 0
                 ];
             }
 
@@ -326,14 +349,12 @@ class BookingController extends Controller
     public function updateBookingStatus(Request $request)
     {
         try {
+
             $request->validate([
-                'id_booking' => 'required', // memastikan ID booking diberikan
+                'id_booking' => 'required',
             ]);
 
-            // Mencari booking berdasarkan id_booking
             $booking = Booking::find($request->id_booking);
-
-            // Cek jika booking ditemukan
             if ($booking) {
                 // Update status
                 $booking->status = 'selesai';
@@ -359,5 +380,4 @@ class BookingController extends Controller
             ], 'Update gagal', 500);
         }
     }
-
 }
