@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mobile;
 
 use App\Helpers\ResponseFormatter;
+use App\Helpers\FirebaseNotificationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
@@ -79,13 +80,33 @@ class UserController extends Controller
             $user = User::where('username', $request->username)->first();
             // Tambahkan pengecekan apakah user sudah terverifikasi
             if ($user->verified_user == 0) {
-                return ResponseFormatter::error(['message' => 'User belum terverifikasi.'], 'Authentication Failed', 403);
+                return ResponseFormatter::error(['message' => 'User belum terverifikasi.', 'user' => $user], 'Authentication Failed', 505);
             }
             if (!Hash::check($request->password, $user->password, [])) {
                 throw new \Exception('Invalid Credentials');
             }
             if ($user->device_token && $user->device_token !== $request->device_token) {
-                return ResponseFormatter::error(['message' => 'User sedang masuk diakun'], 'Authentication Failed', 403);
+                // Store the old tokens
+                $oldDeviceToken = $user->device_token;
+                $oldPhoneToken = $user->phone_token;
+
+                // Update user with new tokens
+                $user->update([
+                    'device_token' => $request->device_token,
+                    'phone_token' => $request->phone_token
+                ]);
+
+                if ($oldPhoneToken) {
+                    FirebaseNotificationHelper::sendNotification($oldPhoneToken, 'Akun anda telah dikeluarkan', 'Ada user lain yang masuk dalam akun',  [
+                        'type' => 'force_logout',
+                        'message' => 'Your account has been logged in on another device'
+                    ]);
+                }
+
+                return ResponseFormatter::success([
+                    'user' => $user,
+                    'previous_device_logged_out' => true
+                ], 'Authenticated');
             }
 
             // Periksa apakah phone_token kosong, jika ya, update phone_token
@@ -102,6 +123,52 @@ class UserController extends Controller
                 'message' => 'ada yang error',
                 'error' => $error,
             ], 'Authentication Failed', 500);
+        }
+    }
+
+    public function validateSession(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_id' => 'required',
+                'device_token' => 'required',
+                'phone_token' => 'required',
+            ]);
+
+            $user = User::find($request->user_id);
+
+            if (!$user) {
+                return ResponseFormatter::error(
+                    ['message' => 'User not found'],
+                    'Validation Failed',
+                    404
+                );
+            }
+
+            // Check if the device tokens match
+            if ($user->device_token !== $request->device_token) {
+                return ResponseFormatter::error(
+                    ['message' => 'Invalid device token'],
+                    'Validation Failed',
+                    401
+                );
+            }
+
+            // Update phone token if it has changed
+            if ($user->phone_token !== $request->phone_token) {
+                $user->update(['phone_token' => $request->phone_token]);
+            }
+
+            return ResponseFormatter::success(
+                ['user' => $user],
+                'Session validated successfully'
+            );
+        } catch (Exception $error) {
+            return ResponseFormatter::error(
+                ['message' => 'Validation failed', 'error' => $error],
+                'Validation Failed',
+                500
+            );
         }
     }
 
