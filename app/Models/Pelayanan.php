@@ -18,11 +18,17 @@ class Pelayanan extends Model
         'id_admin',
         'jenis',
         'no_pelayanan',
+        'id_layanan',
     ];
     public function admin()
     {
         return $this->belongsTo(Admin::class, 'id_admin');
     }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'no_pelayanan', 'no_pelayanan');
+    }
+
 
 
 }

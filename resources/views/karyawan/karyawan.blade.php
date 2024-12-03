@@ -22,6 +22,7 @@
                               <th>No. HP</th>
                               <th>Username</th>
                               <th>Email</th>
+                              <th>Gambar</th>
                               <th>Action</th>
                           </tr>
                       </thead>
@@ -36,6 +37,7 @@
                               <td>{{ $kar->no_hp }}</td>
                               <td>{{ $kar->username }}</td>
                               <td>{{ $kar->email }}</td>
+                              <td><img src="{{ $kar->avatar }}" alt="Avatar {{ $kar->nama_admin }}" class="rounded" width="50" height="50"></td>
                               <td>
                                   <form action="{{ route('karyawan.edit', $kar->id_admin) }}" method="GET" style="display: inline;">
                                       <button type="submit" style="background-color: white; border: 2px solid {{ $profile->warna }}; border-radius: 15%; color: {{ $profile->warna }};">
@@ -45,7 +47,7 @@
                                   <form action="{{ route('karyawan.destroy', $kar->id_admin) }}" method="POST" style="display: inline;">
                                       @csrf
                                       @method('DELETE')
-                                      <button type="submit" onclick="return confirm('Apakah anda yakin ingin menghapus karyawan?')" class="btn-hapus" style="background-color: {{ $profile->warna }}; border: 2px solid {{ $profile->warna }}; border-radius: 15%;">
+                                      <button type="submit" class="btn-hapus" style="background-color: {{ $profile->warna }}; border: 2px solid {{ $profile->warna }}; border-radius: 15%;">
                                           <i class="fas fa-trash-can" style="color: white;"></i>
                                       </button>
                                   </form>

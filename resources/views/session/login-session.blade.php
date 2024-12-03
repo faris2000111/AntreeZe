@@ -32,26 +32,12 @@
                           <span class="input-group-text" onclick="togglePassword('password')" style="cursor: pointer;">
                                   <i class="fa fa-fw fa-eye field-icon toggle-password" id="passwordIcon"></i>
                           </span>
+                          
+                      </div>
                           @error('password')
                               <p class="text-danger text-xs mt-2">{{ $message }}</p>
                           @enderror
-                      </div>
                     </div>
-                    <!-- <label>Password</label>
-                    <div class="mb-3 position-relative">
-                        <div class="input-group">
-                            <input type="password" class="form-control" name="password" id="password" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
-                            Ikon untuk toggle visibility password
-                            <span class="input-group-text" onclick="togglePassword('password')" style="cursor: pointer;">
-                                <i class="fa fa-fw fa-eye field-icon toggle-password" id="passwordIcon"></i>
-                            </span>
-                        </div>
-                        @error('password')
-                            <p class="text-danger text-xs mt-2">{{ $message }}</p>
-                        @enderror
-                    </div> -->
-
-
 
                     <div class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" id="rememberMe" name="remember" checked="">
@@ -59,9 +45,14 @@
                     </div>
 
                     <div class="text-center">
-                      <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Masuk</button>
+                      <button type="submit" class="btn w-100 mt-4 mb-0" style="background-color: {{ $profile->warna }}; color: #FFF;">Masuk</button>
                     </div>
                   </form>
+                </div>
+                <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                <small class="text-muted">Lupa Password? Reset Password Anda
+                  <a href="/login/forgot-password" class="text font-weight-bold" style="color: {{ $profile->warna }};">disini!</a>
+                </small>
                 </div>
               </div>
             </div>

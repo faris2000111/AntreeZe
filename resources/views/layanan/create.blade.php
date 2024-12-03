@@ -26,15 +26,9 @@
 
                         <!-- Gambar and Waktu in one row -->
                         <div class="col-md-6">
-                            <label for="gambar" class="form-label">Gambar</label>
+                            <label for="gambar" class="form-label">Gambar (*jpg/jpeg/png/svg dan max 1MB)</label>
                             <input type="file" name="gambar" class="form-control" id="gambar" required>
                             <div class="invalid-feedback">Please upload a valid image!</div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="waktu" class="form-label">Waktu</label>
-                            <input type="time" name="waktu" class="form-control" id="waktu" required>
-                            <div class="invalid-feedback">Silakan masukkan waktu!</div>
                         </div>
 
                         <!-- Submit button in full row -->

@@ -20,11 +20,10 @@
     {{ $profile->nama_usaha }}
   </title>
 
-  <!--     Fonts and icons     -->
+  <!-- Fonts and icons -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 
-  <!-- jQuery (remove duplicate) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Nucleo Icons -->
@@ -39,24 +38,23 @@
   <link id="pagestyle" href="{{ asset('assets/css/soft-ui-dashboard.css?v=1.0.3') }}" rel="stylesheet" />
 
   <!-- SweetAlert2 -->
-  <script src="{{ asset('dist/sweetalert2.all.min.js') }}"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- DataTables CSS for Bootstrap -->
-<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- howler.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
-
-
-  <!-- Bootstrap CSS (latest version) -->
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
   @yield('styles')
 </head>
 
 <body class="g-sidenav-show bg-gray-100 {{ (\Request::is('rtl') ? 'rtl' : (Request::is('virtual-reality') ? 'virtual-reality' : '')) }}">
-  
+
   @auth
     @yield('auth')
   @endauth
@@ -65,15 +63,6 @@
     @yield('guest')
   @endguest
 
-  <!-- @if(session()->has('success'))
-    <div x-data="{ show: true }"
-         x-init="setTimeout(() => show = false, 4000)"
-         x-show="show"
-         class="position-fixed bg-success rounded right-3 text-sm py-2 px-4">
-      <p class="m-0">{{ session('success') }}</p>
-    </div>
-  @endif -->
-
   <!-- Core JS Files -->
   <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
   <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
@@ -81,6 +70,10 @@
   <script src="{{ asset('assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
   <script src="{{ asset('assets/js/plugins/fullcalendar.min.js') }}"></script>
   <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
+
+  <!-- DataTables -->
+  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
 
   @stack('rtl')
   @stack('dashboard')
@@ -95,27 +88,7 @@
     }
   </script>
 
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-  <!-- Control Center for Soft Dashboard -->
-  <script src="{{ asset('assets/js/soft-ui-dashboard.min.js?v=1.0.3') }}"></script>
-
-  <!-- DataTables -->
-  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-
-  <!-- DataTables Bootstrap JS -->
-  <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
-
-  <!-- Initialize DataTables -->
-<script>
-$(document).ready(function() {
-    $('#dataTable').DataTable();
-});
-</script>
-
-  <!-- Include section scripts -->
-  @yield('scripts')
+  @stack('scripts')
 
 </body>
 
