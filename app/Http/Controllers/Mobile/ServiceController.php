@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Mobile;
 
-use Exception;
-use App\Models\Service;
-use Illuminate\Http\Request;
+
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
+use App\Models\Service;
+use Exception;
 
 class ServiceController extends Controller
 {

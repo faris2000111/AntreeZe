@@ -9,7 +9,7 @@ use Exception;
 
 class ProfileController extends Controller
 {
-
+    //
     public function getProfile()
     {
         try {
@@ -35,14 +35,13 @@ class ProfileController extends Controller
             }
 
             $banners = [$profile->banner1, $profile->banner2, $profile->banner3];
-
-            // Filter out null values from the banners list
             $listBanner = array_filter($banners, function ($banner) {
                 return !is_null($banner);
             });
 
             return ResponseFormatter::success(['message' => 'profile found', 'data' => array_values($listBanner)], 'success get data');
         } catch (Exception $error) {
+
             return ResponseFormatter::error(['message' => 'ada sesuatu yang error', 'error' => $error], 'Failed', 500);
         }
     }
