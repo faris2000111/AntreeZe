@@ -11,6 +11,7 @@ class Profile extends Model
 
     protected $table = 'profile';
     protected $fillable = [
+
         'nama_usaha', 
         'logo', 
         'banner', 
@@ -25,5 +26,6 @@ class Profile extends Model
     ];
     protected $attributes = [
         'warna' => 'default-color',  
+=======
     ];
 }
