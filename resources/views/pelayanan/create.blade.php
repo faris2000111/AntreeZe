@@ -16,8 +16,8 @@
                             <label for="id_admin" class="form-label">Nama Admin</label>
                             <select name="id_admin" class="form-control" id="id_admin" required>
                                 <option value="" disabled selected>Pilih Admin</option>
-                                @foreach($admins as $admin)
-                                    <option value="{{ $admin->id_admin }}">{{ $admin->nama_admin }}</option>
+                                @foreach($adminsa as $adm)
+                                    <option value="{{ $adm->id_admin }}">{{ $adm->nama_admin }}</option>
                                 @endforeach
                             </select>
                             <div class="invalid-feedback">Silakan pilih admin!</div>
@@ -28,16 +28,15 @@
                             <select name="jenis" class="form-control" id="jenis" required>
                                 <option value="" selected disabled>Pilih Jenis Pelayanan</option>
                                 <option value="Loket">Loket</option>
-                                <option value="Teknisi">Teknisi</option>
-                                <option value="Capster">Capster</option>
+                                <option value="Customer Service">Customer Service</option>
                             </select>
                             <div class="invalid-feedback">Jenis Pelayanan tidak boleh kosong!</div>
                         </div>
 
                         <!-- No Pelayanan in full row -->
                         <div class="col-md-6">
-                            <label for="no_pelayanan" class="form-label">No Pelayanan</label>
-                            <input type="text" name="no_pelayanan" class="form-control" id="no_pelayanan" value="{{ $newNoPelayanan }}" readonly required>
+                            <label for="no_pelayanan" class="form-label">Nomor Pelayanan</label>
+                            <input type="number" name="no_pelayanan" class="form-control" id="no_pelayanan" required>
                             <div class="invalid-feedback">No Pelayanan tidak boleh kosong!</div>
                         </div>
 
@@ -54,31 +53,59 @@
 
 <!-- SweetAlert2 untuk error dan sukses -->
 @if ($errors->any())
-    <script>
-        let errorMessages = '';
-        @foreach ($errors->all() as $error)
-            errorMessages += '{{ $error }}\n';
-        @endforeach
+<script>
+    let errorMessages = '';
+    @foreach ($errors->all() as $error)
+        errorMessages += '{{ $error }}\n';
+    @endforeach
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: errorMessages,
-            confirmButtonText: 'Ok'
-        });
-    </script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessages,
+        confirmButtonText: 'Ok'
+    });
+</script>
 @endif
 
 @if(session('success'))
-    <script>
-        Swal.fire({
-            title: 'Success!',
-            text: '{{ session('success') }}',
-            icon: 'success',
-            confirmButtonText: 'OK',
-            timer: 3000
-        });
-    </script>
+<script>
+    Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        timer: 3000
+    });
+</script>
 @endif
+
+<script>
+    $(document).ready(function() {
+        $('#no_pelayanan').on('input', function() {
+            let noPelayanan = $(this).val();
+
+            // Kirim AJAX untuk mendapatkan layanan yang belum ada pada no_pelayanan ini
+            $.ajax({
+                url: '{{ route('getLayanans') }}',
+                type: 'GET',
+                data: {
+                    no_pelayanan: noPelayanan
+                },
+                success: function(response) {
+                    let layananSelect = $('#id_layanan');
+                    layananSelect.empty(); // Kosongkan dropdown
+
+                    layananSelect.append('<option value="" selected disabled>Pilih Nama Layanan</option>');
+
+                    // Tambahkan layanan yang didapatkan dari response
+                    $.each(response, function(index, layanan) {
+                        layananSelect.append('<option value="'+layanan.id_layanan+'">'+layanan.nama_layanan+'</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 @endsection

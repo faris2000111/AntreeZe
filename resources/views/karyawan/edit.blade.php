@@ -33,8 +33,9 @@
                         
                         <div class="col-md-6">
                             <label for="no_hp" class="form-label">No. HP</label>
-                            <input type="number" name="no_hp" class="form-control" id="no_hp" value="{{ $karyawan->no_hp }}" required>
+                            <input type="text" name="no_hp" class="form-control" id="no_hp" value="{{ $karyawan->no_hp }}" required maxlength="14" oninput="validateNoHp(this)" onblur="checkMinLength()">
                             <div class="invalid-feedback">Please, enter your phone number!</div>
+                            <small id="charCount">0/14</small>
                         </div>
                         <!-- Confirm Password and No. HP in one row -->
                         <div class="col-md-6">
@@ -43,7 +44,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="password_confirmation" class="form-label">Confirm Password</label>
+                            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                             <input type="password" name="password_confirmation" class="form-control" id="password_confirmation">
                         </div>
 
@@ -57,8 +58,9 @@
         </div>
     </div>
 </section>
+@endsection
 
-@section('scripts')
+@push('scripts')
     @if ($errors->any())
         <script>
             let errorMessages = '';
@@ -74,6 +76,33 @@
             });
         </script>
     @endif
-@endsection
 
-@endsection
+    <script>
+        function validateNoHp(input) {
+            const maxLength = 14;
+            let value = input.value;
+
+            value = value.replace(/[^0-9]/g, '');
+
+            if (value.length > maxLength) {
+                value = value.slice(0, maxLength);
+            }
+            input.value = value;
+
+            document.getElementById('charCount').innerText = `${value.length}/${maxLength}`;
+        }
+
+        function checkMinLength() {
+            const input = document.getElementById('no_hp');
+            const value = input.value;
+    
+            if (value.length < 10) {
+                document.getElementById('invalid-feedback').style.display = 'block';
+                input.classList.add('is-invalid');
+            } else {
+                document.getElementById('invalid-feedback').style.display = 'none';
+                input.classList.remove('is-invalid');
+            }
+        }
+    </script>
+@endpush

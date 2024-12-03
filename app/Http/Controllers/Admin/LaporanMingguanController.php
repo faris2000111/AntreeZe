@@ -4,63 +4,83 @@ namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Admin;
 use App\Models\Booking;
 use App\Models\Profile;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class LaporanMingguanController extends Controller
 {
     public function index()
     {
-        $admin = Auth::guard('admin')->user();
-        
-        // Ambil data booking dalam rentang waktu seminggu terakhir
+        $admin = auth()->guard('admin')->user();
+
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
-    
-        // Ambil data booking dengan status selesai selama satu minggu
+
+        $users = User::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
         $booking = DB::table('booking')
             ->join('pelayanan', 'booking.no_pelayanan', '=', 'pelayanan.no_pelayanan')
             ->join('layanan', 'layanan.id_layanan', '=', 'booking.id_layanan')
             ->join('users', 'users.id_users', '=', 'booking.id_users')
             ->select('booking.*', 'pelayanan.*', 'layanan.nama_layanan', 'users.nama_pembeli')
             ->whereBetween('booking.tanggal', [$startOfWeek, $endOfWeek])
-            ->where('booking.status', 'selesai')
+            ->whereIn('booking.status', ['selesai', 'dibatalkan'])
             ->orderBy('booking.tanggal', 'asc')
             ->get();
-    
-        // Tentukan jam buka dan tutup (misal dari 08:00 hingga 18:00)
-        $jamBuka = 8;
-        $jamTutup = 18;
-        $jamBukaTutup = [];
-        
-        // Generate jam mulai dari jam buka sampai jam tutup
-        for ($i = $jamBuka; $i <= $jamTutup; $i++) {
-            $jamBukaTutup[] = $i . ":00";
-        }
-    
-        // Inisialisasi chartData untuk menampung kepadatan antrian dan booking per jam
-        $chartData = [
-            'antrian' => array_fill(0, 7, array_fill(0, $jamTutup - $jamBuka + 1, 0)), // Kepadatan antrian per hari dan jam
-            'booking' => array_fill(0, 7, array_fill(0, $jamTutup - $jamBuka + 1, 0))  // Data booking per hari dan jam
+
+        $defaultColors = [
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
+            'rgba(201, 203, 207, 0.7)' 
         ];
-    
-        // Hitung jumlah booking per hari dan jam
-        foreach ($booking as $bok) {
-            $hari = Carbon::parse($bok->tanggal)->dayOfWeek; // Mendapatkan hari dari tanggal
-            $jam = Carbon::parse($bok->jam_booking)->hour; // Mendapatkan jam dari waktu booking
-            
-            if ($jam >= $jamBuka && $jam <= $jamTutup) {
-                $indexJam = $jam - $jamBuka; // Hitung index untuk jam (offset dari jam buka)
-                $chartData['antrian'][$hari][$indexJam]++; // Tambahkan jumlah antrian per hari dan jam
-                $chartData['booking'][$hari][$indexJam]++; // Tambahkan jumlah booking per hari dan jam
-            }
-        }
-    
-        return view('laporan-mingguan.laporan-mingguan', compact('admin', 'booking', 'chartData', 'jamBukaTutup', 'jamBuka', 'jamTutup'));
+        $bookings = DB::table('booking')
+            ->join('layanan', 'booking.id_layanan', '=', 'layanan.id_layanan')
+            ->select(
+                DB::raw('DAYOFWEEK(booking.tanggal) as day_of_week'),
+                'layanan.nama_layanan',
+                DB::raw('count(booking.id_booking) as total_booking')
+            )
+            ->whereBetween('booking.tanggal', [$startOfWeek, $endOfWeek])
+            ->where('booking.status', 'selesai')
+            ->groupBy('day_of_week', 'layanan.nama_layanan')
+            ->get();
+
+        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+        $layananNames = $bookings->pluck('nama_layanan')->unique(); 
+        $chartData = [];
+
+    function getColor($index, $defaultColors) {
+        return $defaultColors[$index % count($defaultColors)];
     }
-}    
+
+    $layananIndex = 0;
+    foreach ($layananNames as $layanan) {
+        $dataset = [];
+        foreach (range(1, 7) as $dayIndex) {
+            $totalBookingPerDay = $bookings->where('day_of_week', $dayIndex + 1)
+                ->where('nama_layanan', $layanan)
+                ->first();
+            $dataset[] = $totalBookingPerDay ? $totalBookingPerDay->total_booking : 0;
+        }
+        $color = getColor($layananIndex, $defaultColors);
+        $chartData[] = [
+            'label' => $layanan,
+            'data' => $dataset,
+            'backgroundColor' => $color,
+            'borderColor' => $color,
+            'borderWidth' => 1
+        ];
+        $layananIndex++; 
+    }
+        return view('laporan.laporan-mingguan', compact('admin', 'users', 'booking', 'days', 'chartData'));
+    }
+}

@@ -19,12 +19,6 @@
                             <div class="invalid-feedback">Nama layanan tidak boleh kosong!</div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label for="waktu" class="form-label">Waktu</label>
-                            <input type="time" name="waktu" class="form-control" id="waktu" value="{{ $layanan->waktu }}" required>
-                            <div class="invalid-feedback">Waktu tidak boleh kosong!</div>
-                        </div>
-
                         <!-- Deskripsi dan Gambar in one row -->
                         <div class="col-md-6">
                             <label for="deskripsi" class="form-label">Deskripsi</label>
@@ -33,7 +27,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="gambar" class="form-label">Gambar</label>
+                            <label for="gambar" class="form-label">Gambar (*jpg/jpeg/png/svg dan max 1MB)</label>
                             @if($layanan->gambar)
                                 <div class="mb-2">
                                     <img src="{{ asset('storage/layanan/' . $layanan->gambar) }}" alt="Gambar Layanan" style="max-width: 100px; height: auto;">
@@ -54,22 +48,33 @@
     </div>
 </section>
 
-@section('scripts')
-    @if ($errors->any())
-        <script>
-            let errorMessages = '';
-            @foreach ($errors->all() as $error)
-                errorMessages += '{{ $error }}\n';
-            @endforeach
+<!-- SweetAlert2 untuk error dan sukses -->
+@if ($errors->any())
+    <script>
+        let errorMessages = '';
+        @foreach ($errors->all() as $error)
+            errorMessages += '{{ $error }}\n';
+        @endforeach
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: errorMessages,
-                confirmButtonText: 'Ok'
-            });
-        </script>
-    @endif
-@endsection
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: errorMessages,
+            confirmButtonText: 'Ok'
+        });
+    </script>
+@endif
+
+@if(session('success'))
+    <script>
+        Swal.fire({
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            timer: 3000
+        });
+    </script>
+@endif
 
 @endsection

@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     use HasFactory;
+
     protected $table = 'booking';
+
     protected $primaryKey = 'id_booking'; // Set primary key ke 'id_layanan'
     public $incrementing = true; // Jika 'id_layanan' auto-increment, pastikan true
     protected $keyType = 'int'; // Jika 'id_layanan' adalah integer
@@ -26,5 +28,6 @@ class Booking extends Model
     public function layanan()
     {
         return $this->belongsTo(Layanan::class, 'id_layanan');
+
     }
 }

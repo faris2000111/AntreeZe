@@ -21,7 +21,6 @@
                       <th>Nama Layanan</th>
                       <th>Deskripsi</th>
                       <th>Gambar</th>
-                      <th>Waktu</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -33,10 +32,9 @@
                     <tr style="text-align: center;">
                       <th scope="row">{{ $no++ }}</th>
                       <td>{{ $lay->nama_layanan }}</td>
-                      <td>{{ $lay->deskripsi }}</td>
+                      <td>{{ Str::limit($lay->deskripsi, 50) }}</td>
                       <td><img src="{{ asset('storage/layanan/'.$lay->gambar) }}" class="rounded" width="50" height="50">
                       </td>
-                      <td>{{ $lay->waktu }}</td>
                       <td>
                       <form action="{{ route('layanan.edit', $lay->id_layanan) }}" method="GET" style="display: inline;">
                           <button type="submit" style="background-color: white; border: 2px solid {{ $profile->warna }}; border-radius: 15%; color: {{ $profile->warna }};">

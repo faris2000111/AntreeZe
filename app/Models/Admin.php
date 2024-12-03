@@ -25,8 +25,8 @@ class Admin extends Authenticatable
         'username',
         'password',
         'no_hp',
-        'alamat',
         'role',
+        'avatar',
         'remember_token',
     ];
 

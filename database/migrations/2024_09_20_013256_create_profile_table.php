@@ -4,12 +4,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateProfileTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('profile', function (Blueprint $table) {
             $table->id();
@@ -18,15 +15,15 @@ return new class extends Migration
             $table->string('warna')->nullable();
             $table->time('jam_buka')->nullable();
             $table->time('jam_tutup')->nullable();
+            $table->string('banner1')->nullable();
+            $table->string('banner2')->nullable();
+            $table->string('banner3')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('profile');
     }
-};
+}
