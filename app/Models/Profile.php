@@ -26,6 +26,5 @@ class Profile extends Model
     ];
     protected $attributes = [
         'warna' => 'default-color',  
-=======
     ];
 }
