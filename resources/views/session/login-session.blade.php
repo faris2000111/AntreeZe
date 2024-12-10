@@ -14,7 +14,7 @@
                   <p class="mb-0">Masukkan Username dan Password Anda untuk Masuk<br></p>
                 </div>
                 <div class="card-body">
-                  <form role="form" method="POST" action="/session">
+                  <form role="form" method="POST" action="{{ url('/session') }}">
                     @csrf
                     <label>Username</label>
                     <div class="mb-3">
@@ -32,7 +32,7 @@
                           <span class="input-group-text" onclick="togglePassword('password')" style="cursor: pointer;">
                                   <i class="fa fa-fw fa-eye field-icon toggle-password" id="passwordIcon"></i>
                           </span>
-                          
+
                       </div>
                           @error('password')
                               <p class="text-danger text-xs mt-2">{{ $message }}</p>
@@ -51,14 +51,14 @@
                 </div>
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                 <small class="text-muted">Lupa Password? Reset Password Anda
-                  <a href="/login/forgot-password" class="text font-weight-bold" style="color: {{ $profile->warna }};">disini!</a>
+                  <a href="{{ url('/login/forgot-password') }}" class="text font-weight-bold" style="color: {{ $profile->warna }};">disini!</a>
                 </small>
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
-                <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url('../assets/img/curved-images/curved6.jpg')"></div>
+                <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url({{ asset('img/curved-images/curved6.jpg') }})"></div>
               </div>
             </div>
           </div>
