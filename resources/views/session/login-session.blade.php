@@ -14,7 +14,7 @@
                   <p class="mb-0">Masukkan Username dan Password Anda untuk Masuk<br></p>
                 </div>
                 <div class="card-body">
-                  <form role="form" method="POST" action="{{ url('/session') }}">
+                  <form role="form" method="POST" action="{{ route('session') }}">
                     @csrf
                     <label>Username</label>
                     <div class="mb-3">
