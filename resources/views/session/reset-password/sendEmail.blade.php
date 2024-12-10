@@ -29,8 +29,8 @@
                         <h4 class="mb-0">Lupa Passowrd Anda? Masukkan Email Anda</h4>
                     </div>
                     <div class="card-body">
-                    
-                        <form action="/forgot-password" method="POST" role="form text-left">
+
+                        <form action="{{ url('/forgot-password') }}" method="POST" role="form text-left">
                             @csrf
                             <div>
                                 <label for="email">Email</label>

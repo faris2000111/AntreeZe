@@ -11,7 +11,7 @@
                         <h4 class="mb-0">Ganti Password</h4>
                     </div>
                     <div class="card-body">
-                        <form role="form" action="/reset-password" method="POST">
+                        <form role="form" action="{{ url('/reset-password') }}" method="POST">
                             @csrf
                             <input type="hidden" name="token" value="{{ $token }}">
                             <div>
