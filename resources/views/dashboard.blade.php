@@ -152,7 +152,7 @@
           </div>
           <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
             <div class="border-radius-lg h-100" style="background-color:{{ $profile->warna }};">
-              <img src="../assets/img/shapes/waves-white.svg" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
+              <img src="{{ asset('assets/img/shapes/waves-white.svg') }}" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
               <div class="position-relative d-flex align-items-center justify-content-center h-100">
                 <img class="w-100 position-relative z-index-2 pt-4" src="{{ $admins->avatar }}" alt="Avatar {{ $admins->nama_admin }}">
               </div>
@@ -170,7 +170,7 @@
         <p class="text-xs mb-1">Total Booking Bulan Ini: <strong>{{ $totalBookings }}</strong></p>
         <p class="text-xs mb-1">Booking Berhasil: <strong>{{ $successfulBookings }}</strong></p>
         <p class="text-xs mb-1">Booking Dibatalkan: <strong>{{ $cancelledBookings }}</strong></p>
-        <p class="text-xs mb-1">Layanan Terlaris: 
+        <p class="text-xs mb-1">Layanan Terlaris:
           <strong>{{ $popularServiceName ?? 'Tidak ada data' }}</strong>
         </p>
         <a class="text-body text-sm font-weight-bold mt-auto" href="/laporan-bulanan">
@@ -218,7 +218,7 @@
             var ctx = document.getElementById('hourlyBookingChart').getContext('2d');
             var chartLabels = @json($chartLabels);
             var chartData = @json($chartData);
-          
+
             var hourlyBookingChart = new Chart(ctx, {
               type: 'bar',
               data: {
@@ -323,7 +323,7 @@
     }
 
     fetchLoketData();
-    setInterval(fetchLoketData, 3000); 
+    setInterval(fetchLoketData, 3000);
 </script>
 @endpush
 
