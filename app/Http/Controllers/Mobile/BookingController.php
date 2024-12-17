@@ -246,10 +246,12 @@ class BookingController extends Controller
                 'created_at' => $request->created_at
             ]);
 
+            $firebase_json = env('FIREBASE_CREDENTIALS');
             // Firebase setup
             $factory = (new Factory())
                 // Sesuaikan dengan tempat penyimpanan
-                ->withServiceAccount('/xampp/htdocs/antreezy/AntreeZe/config/antriqu_crendetials.json')
+                // ->withServiceAccount('/xampp/htdocs/antreezy/AntreeZe/config/antriqu_crendetials.json')
+                ->withServiceAccount($firebase_json)
                 ->withDatabaseUri('https://antriqu-apps-default-rtdb.asia-southeast1.firebasedatabase.app');
             $database = $factory->createDatabase();
 
